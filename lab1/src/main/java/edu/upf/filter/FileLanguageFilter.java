@@ -1,0 +1,6 @@
+package edu.upf.filter;
+
+public class FileLanguageFilter {
+    final String inputFile = ""; //INICIADO A UNA EMPTY STRING PARA EVITAR QUE MARQUE ERROR, ARREGLAR/HACER EN FUTUROS APARTADOS - JOSE
+    final String outputFile = ""; //INICIADO A UNA EMPTY STRING PARA EVITAR QUE MARQUE ERROR, ARREGLAR/HACER EN FUTUROS APARTADOS - JOSE
+}
