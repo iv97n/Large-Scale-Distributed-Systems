@@ -6,6 +6,26 @@
 **Introduction**: This repository consists of a collection of practice deliveries centered around the use of Java, AWS, and Docker technologies. 
 
 ## Lab 1
+- ### 1. Tweet Parser
+	The _SimplifiedTweet_ class implements the functionalities related to the parsing of the tweets.  
+	
+	The static method _SimplifiedTweet.fromJson_ takes as input a oneline representation of a json encoded tweet and returns an _Optional_ object containing a _SimplifiedTweet_ instance. The method does not propagate exceptions, but handles them by omitting the invalid inputs. The _try_ block assumes a correct formatting of the tweet, so any missing field or invalid type will raise an exception that will be catched and ignored.
+
+- ### 2. Tweet Filter
+	The _FileLanguageFilter_ class implements the functionalities related to the 	parsing of the tweets. The class itself is an extension of the 				_LanguageFilter_ interface, which defines the _filterLanguage_ method signature. The _FileLanguageFilter_ has two attributes related to the input and output file paths.
+	
+	The method _filterLanguage_ takes as input a language specification string which follows the ISO 639-1 standard, and writes to the output file in append mode all the tweets from the input file that satisfy the language condition. The method does propagate IOExceptions in case of error opening and managing input resources. Try-with-resource functionality is used to auomatically release resources in case of exception.
+
+- ### 3. Uploader
+	The _S3Uploader_ class implements the functionalities related to the uploading of the output files to the AWS cloud. The class itself is an implementation of the interface _Uploader_, which defines the _upload_ method signature.
+	
+	
+	
+	The method _upload_ takes as input an array of file paths, and uploads the files to the specified S3 bucket. The method assumes the user has already set valid credentials to the AWS services.
+
+- ### 4. Main
+	The _main_ method is enclosed inside the _TwitterFilter_ class. It is the one responsible for the handling of the input parameters and the overall workflow of the application. In case of invalid number of parameters, the exception is handled and a print message is displayed on the standard output with the usage of the application. The program itself does not handle invalid input and output file paths, but propoagates the IOException until the execution is halted.
+
 - ### 5.Benchmarking
 	#### Runtime environment specifications: 
 	- #### MSI CreatorPro M15  
