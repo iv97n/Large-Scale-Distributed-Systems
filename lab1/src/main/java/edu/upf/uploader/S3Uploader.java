@@ -26,18 +26,25 @@ public class S3Uploader implements Uploader {
     
     @Override
     public void upload(List<String> files) {
-        // Create S3 client with specified credentials profile
-        AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-                .withCredentials(new ProfileCredentialsProvider(CredentialProfileName))
-                .build();
+        try{
+            // Create S3 client with specified credentials profile
+            AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+            .withCredentials(new ProfileCredentialsProvider(CredentialProfileName))
+            .build();
 
-        // Iterate through the list of files and upload them to S3
-        for (String file : files) {
-            File localFile = new File(file);
-            String key = Prefix + "/" + localFile.getName();
+            // Iterate through the list of files and upload them to S3
+            for (String file : files) {
+                File localFile = new File(file);
+                String key = Prefix + "/" + localFile.getName();
 
-            // Upload file to S3 bucket
-            s3Client.putObject(new PutObjectRequest(BucketName, key, localFile));
+                // Upload file to S3 bucket
+                s3Client.putObject(new PutObjectRequest(BucketName, key, localFile));
+            }
+
+
+
+        }catch(Exception e){
+            System.out.println("Unable to reach the specified S3 bucket, check the bucket path and the AWS credentials\n");
         }
 
     }
