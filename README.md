@@ -17,7 +17,7 @@
 	The method _filterLanguage()_ takes as input a language specification string which follows the ISO 639-1 standard, and writes to the output file in append mode all the tweets from the input file that satisfy the language condition. The method does propagate IOExceptions in case of error opening and managing input resources. Try-with-resource functionality is used to auomatically release resources in case of exception.
 
 - ### 3. Uploader
-	The _S3Uploader_ class implements the functionalities related to the uploading of the output files to the AWS cloud. The class itself is an implementation of the interface _Uploader_, which defines the _upload_ method signature.
+	The _S3Uploader_ class implements the functionalities related to the uploading of the output files to the AWS cloud. The class itself is an implementation of the interface _Uploader_, which defines the _upload_ method signature. If an exception occurs, a message is prompted into the standard output warning the user that the specified bucket path is unreachable.
 	
 	
 	
