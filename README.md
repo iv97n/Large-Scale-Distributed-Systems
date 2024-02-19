@@ -3,7 +3,7 @@
 
 **Course reference**: [24953] - Large-Scale Distributed Systems. [Universitat Pompeu Fabra](https://www.upf.edu/)
 
-**Introduction**: This repository consists of a collection of practice deliveries centered around the use of Java, AWS, and Docker technologies. 
+**Introduction**: This repository consists of a collection of practice deliveries centered around the use of Java, AWS, Docker, and Spark technologies. 
 
 ## Lab 1
 - ### 1. Tweet Parser
