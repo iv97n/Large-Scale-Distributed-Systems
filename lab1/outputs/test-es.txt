@@ -1,1 +1,0 @@
-{"tweetId":995332494974210048,"text":"Dummy text","userId":492271155,"userName":"alba aguirre","language":"es","timestampMs":10}
