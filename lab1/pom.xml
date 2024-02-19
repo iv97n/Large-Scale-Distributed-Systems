@@ -91,7 +91,20 @@
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.2.1</version>
         <configuration>
-          <!-- put your configurations here if need be -->
+          <!-- 
+            
+            put your configurations here if need be 
+          
+          <transformers>
+            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+            <manifestEntries>
+              <Main-Class>edu.upf.TwitterFilter</Main-Class>
+              <Class-Path>src/main/java</Class-Path>
+            </manifestEntries>
+            </transformer>
+          </transformers>  
+          
+          -->
         </configuration>
         <executions>
           <execution>

@@ -2,13 +2,14 @@ package edu.upf.parser;
 
 import java.util.Optional;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class SimplifiedTweet {
 
-  // All classes use the same instance
+  // All instance of the SimplifiedTweet class use the same JsonParser instance
   private static JsonParser parser = new JsonParser();
 
 
@@ -26,7 +27,7 @@ public class SimplifiedTweet {
     this.userName = userName;
     this.language = language;
     this.timestampMs = timestampMs;
-    }
+  }
 
   /**
    * Returns a {@link SimplifiedTweet} from a JSON String.
@@ -37,54 +38,52 @@ public class SimplifiedTweet {
    */
   public static Optional<SimplifiedTweet> fromJson(String jsonStr) {
     try {
-      JsonElement je = JsonParser.parseString(jsonStr);
-      JsonObject jo = je.getAsJsonObject();
-      long tweetId = -1;
-      String text = null;
-      long userId = -1;
-      String userName = null;
-      String language = null;
-      long timestampMs = -1;
+      JsonObject tweet_as_json_object = JsonParser.parseString(jsonStr).getAsJsonObject();
 
-      if (jo.has("id")) {
-        tweetId = jo.get("id").getAsLong();
-      }
-      if (jo.has("text")) {
-        text = jo.get("text").getAsJsonPrimitive().getAsString();
-      }
-      if (jo.has("user")) {
-        JsonObject userObj = jo.getAsJsonObject("user");
-        if (userObj.has("id")) {
-          userId = userObj.get("id").getAsLong();
-        }
-        if (userObj.has("name")) {
-          userName = userObj.get("name").getAsJsonPrimitive().getAsString();
-        }
-      }
+      long tweetId = tweet_as_json_object.get("id").getAsLong();
+      String text = tweet_as_json_object.get("text").getAsJsonPrimitive().getAsString();
+      String language = tweet_as_json_object.get("lang").getAsJsonPrimitive().getAsString();
+      long timestampMs = tweet_as_json_object.get("timestamp_ms").getAsLong();
 
-      if (jo.has("lang")) {
-        language = jo.get("lang").getAsJsonPrimitive().getAsString();
-      }
-      if (jo.has("timestamp_ms")) {
-        timestampMs = jo.get("timestamp_ms").getAsLong();
-      }
+      JsonObject user_as_json_object = tweet_as_json_object.getAsJsonObject("user");
+      long userId = user_as_json_object.get("id").getAsLong();
+      String userName = user_as_json_object.get("name").getAsJsonPrimitive().getAsString();
 
-      if (tweetId == -1 || text == null || userId == -1 || userName == null || language == null || timestampMs == -1) {
-        System.out.println("The tweet format is not correct");
-        return Optional.empty();
-      } else {
-        SimplifiedTweet obj = new SimplifiedTweet(tweetId, text, userId, userName, language, timestampMs);
-        return Optional.of(obj);
-      }
+      SimplifiedTweet simplified_tweet = new SimplifiedTweet(tweetId, text, userId, userName, language, timestampMs);
+      return Optional.of(simplified_tweet);
+
     } catch (Exception e) {
-      e.printStackTrace();
+      // System.out.println("Omitted tweet. Mandatory fields: {\"id\": ,\"text\": , \"user\": {\"id\": , \"name\": }, \"lang\": ,\"timestamp_ms\": }\n");
       return Optional.empty();
     }
+  }
+
+   
+  public long getTweetId(){
+    return this.tweetId;
+  }
+  public String getText(){
+    return this.text;
+  }
+  public long getUserId(){
+    return this.userId;
+  }
+  public String getUserName(){
+    return this.userName;
+  }
+
+  public String getLanguage(){
+    return this.language;
+  }
+  public long getTimeStamp(){
+    return this.timestampMs;
   }
 
 
   @Override
   public String toString() {
-    return "";
+    // Overriding how SimplifiedTweets are printed in console or the output file
+    // The following line produces valid JSON as output
+    return new Gson().toJson(this);
   }
 }
