@@ -69,3 +69,6 @@
 		- Parsing of a valid tweet: The test asserts that each of the attributes of the generated _SimplifiedTweet_ instance match the expected output.
 		- Parsing of an invalid tweet: The test checks that the Optional object returned by the _SimplifiedTweet.fromJson()_ method is indeed empty.
 		- Parsing of a tweet with a missing field: The test checks that the Optional object returned by the _SimplifiedTweet.fromJson()_ method is indeed empty.
+
+
+**Final Note**: Please note that the warning showing during execution that reads: "WARNING: JAXB is unavailable. Will fallback to SDK implementation which may be less performant.If you are using Java 9+, you will need to include javax.xml.bind:jaxb-api as a dependency." is related to the usage of the Java SDK S3 dependency. JAXB is a Java Standard but in newer versions of Java it must be included explicitly as a dependency in order to achieve the maximum performance in XML processing. Nonetheless, we opted for leaving the POM as asked and do not include extra dependencies, considering the existence of major reasons for the teachers to not mention this situation explicitly.
