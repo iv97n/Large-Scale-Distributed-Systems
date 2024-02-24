@@ -1,0 +1,41 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package spark;
+
+import java.util.Arrays;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import scala.Tuple2;
+
+public class WordCount {
+    public WordCount() {
+    }
+
+    public static void main(String[] args) {
+        String input = args[0];
+        String outputDir = args[1];
+        SparkConf conf = (new SparkConf()).setAppName("Word Count");
+        JavaSparkContext sparkContext = new JavaSparkContext(conf);
+        JavaRDD<String> sentences = sparkContext.textFile(input);
+        JavaPairRDD<String, Integer> counts = sentences.flatMap((s) -> {
+            return Arrays.asList(s.split("[ ]")).iterator();
+        }).map((word) -> {
+            return normalise(word);
+        }).mapToPair((word) -> {
+            return new Tuple2(word, 1);
+        }).reduceByKey((a, b) -> {
+            return a + b;
+        });
+        System.out.println("Total words: " + counts.count());
+        counts.saveAsTextFile(outputDir);
+    }
+
+    private static String normalise(String word) {
+        return word.trim().toLowerCase();
+    }
+}

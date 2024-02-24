@@ -1,0 +1,85 @@
+
+package edu.upf.model;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import java.util.Optional;
+
+public class SimplifiedTweet {
+    private static JsonParser parser = new JsonParser();
+    private final long tweetId;
+    private final String text;
+    private final long userId;
+    private final String userName;
+    private final String language;
+    private final long timestampMs;
+
+    public SimplifiedTweet(long tweetId, String text, long userId, String userName, String language, long timestampMs) {
+        this.tweetId = tweetId;
+        this.text = text;
+        this.userId = userId;
+        this.userName = userName;
+        this.language = language;
+        this.timestampMs = timestampMs;
+    }
+
+    public static Optional<SimplifiedTweet> fromJson(String jsonStr) {
+        try {
+            JsonElement je = JsonParser.parseString(jsonStr);
+            JsonObject jo = je.getAsJsonObject();
+            long tweetId = -1L;
+            String text = null;
+            long userId = -1L;
+            String userName = null;
+            String language = null;
+            long timestampMs = -1L;
+            if (jo.has("id")) {
+                tweetId = jo.get("id").getAsLong();
+            }
+
+            if (jo.has("text")) {
+                text = jo.get("text").getAsJsonPrimitive().getAsString();
+            }
+
+            if (jo.has("user")) {
+                JsonObject userObj = jo.getAsJsonObject("user");
+                if (userObj.has("id")) {
+                    userId = userObj.get("id").getAsLong();
+                }
+
+                if (userObj.has("name")) {
+                    userName = userObj.get("name").getAsJsonPrimitive().getAsString();
+                }
+            }
+
+            if (jo.has("lang")) {
+                language = jo.get("lang").getAsJsonPrimitive().getAsString();
+            }
+
+            if (jo.has("timestamp_ms")) {
+                timestampMs = jo.get("timestamp_ms").getAsLong();
+            }
+
+            if (tweetId != -1L && text != null && userId != -1L && userName != null && language != null && timestampMs != -1L) {
+                SimplifiedTweet obj = new SimplifiedTweet(tweetId, text, userId, userName, language, timestampMs);
+                return Optional.of(obj);
+            } else {
+                System.out.println("The tweet format is not correct");
+                return Optional.empty();
+            }
+        } catch (Exception var13) {
+            var13.printStackTrace();
+            return Optional.empty();
+        }
+    }
+
+    public String getLanguage() {
+        return this.language;
+    }
+
+    public String toString() {
+        return (new Gson()).toJson(this);
+    }
+}
