@@ -13,7 +13,7 @@ import edu.upf.model.SimplifiedTweet;
 
 public class TwitterLanguageFilterApp {
 
-    public void filterLanguage(String[] args) {
+    public static void main(String[] args) {
 
         if (args.length < 3) {
             System.err.println("Usage: TwitterLanguageFilterApp <language> <outputPath> <input>");
