@@ -1,4 +1,4 @@
-package edu.upf.model;
+package edu.upf.spark.parser;
 
 import java.util.Optional;
 

@@ -9,9 +9,8 @@ import com.google.gson.JsonParser;
 
 public class SimplifiedTweet {
 
-  // All instance of the SimplifiedTweet class use the same JsonParser instance
-  private static JsonParser parser = new JsonParser();
 
+  private static JsonParser parser = new JsonParser();
 
   private final long tweetId;			  // the id of the tweet ('id')
   private final String text;  		      // the content of the tweet ('text')
