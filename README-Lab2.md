@@ -49,7 +49,7 @@
 	-  #### Capacity
 		- 1 m5.xlarge master node
 		- 1 m5.xlarge core node
-		- 2 m5.xlarge task node
+		- 2 m5.xlarge task nodes
 	- #### Amazon EMR version
 	    - emr-7.0.0
 	- #### Installed applications
