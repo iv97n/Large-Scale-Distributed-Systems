@@ -33,11 +33,9 @@ public class BiGramsApp {
         // Load input
         JavaRDD<String> sentences = sparkContext.textFile(input);
 
-        JavaRDD<ExtendedSimplifiedTweet> tweets = sentences.map(line -> {
-        Optional<ExtendedSimplifiedTweet> optTweet = ExtendedSimplifiedTweet.fromJson(line);
-        return optTweet.orElse(null);});
-        JavaRDD<ExtendedSimplifiedTweet> filteredTweets = tweets.filter(tweet -> tweet.getLanguage().equals(language) && !tweet.getIsRetweeted());
-        JavaRDD<String> filteredTweetstext = filteredTweets.map(tweet -> tweet.getText().toString());
+        JavaRDD<Optional<ExtendedSimplifiedTweet>> tweets = sentences.map(tweet -> ExtendedSimplifiedTweet.fromJson(tweet));
+        JavaRDD<Optional<ExtendedSimplifiedTweet>> filteredTweets = tweets.filter(tweet -> tweet.get().getLanguage().equals(language) && !tweet.get().getIsRetweeted());
+        JavaRDD<String> filteredTweetstext = filteredTweets.map(tweet -> tweet.get().getText().toString());
 
         JavaPairRDD<List<String>, Integer> counts = filteredTweetstext
             .flatMap(s -> {
