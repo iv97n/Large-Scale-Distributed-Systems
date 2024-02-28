@@ -97,7 +97,11 @@ public class MostRetweetedApp {
   
         // RDD with key = tweetid, value = userid
         JavaPairRDD<Long,Long> paired_top10_retweets = top10_id_to_user.mapToPair(pair -> new Tuple2<>(pair._1(), pair._2()));
-
+        
+// FINS AQUÍ VA TOT BÉ EN TEORIA, QUEDA FER RETURN DEL ID + EL TWEET (COM A CLASSE O COM A TEXT. OMAÑA HA DIT TEXT) 
+        // S'HA DE PASSAR DE (TWEETID, USERID) A (TWEETID, TEXT). AMB JOIN SE'NS COMPLICAVA I SORTIA OUTPUTS REPETITS. 
+        //LO DE BAIX NO ESTÀ EXECUTAT ENCARA AIXÍ QUE NS SI VA
+        
         // Select tweetid of top 10 most retweeted users as a list
         List<Long> tweet_top10 = paired_top10_retweets.map(value -> value._1()).collect();
 
