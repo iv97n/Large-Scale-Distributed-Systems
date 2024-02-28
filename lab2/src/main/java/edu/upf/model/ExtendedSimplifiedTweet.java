@@ -3,6 +3,7 @@ package edu.upf.model;
 import java.util.Optional;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.Serializable;
@@ -12,18 +13,18 @@ public class ExtendedSimplifiedTweet implements Serializable {
 
     private static JsonParser parser = new JsonParser();
 
-    private final Long tweetId; // the id of the tweet (’id’)
+    private final long tweetId; // the id of the tweet (’id’)
     private final String text; // the content of the tweet (’text’)
-    private final Long userId; // the user id (’user->id’)
+    private final long userId; // the user id (’user->id’)
     private final String userName; // the user name (’user’->’name’)
-    private final Long followersCount; // the number of followers (’user’->’followers_count’)
+    private final long followersCount; // the number of followers (’user’->’followers_count’)
     private final String language; // the language of a tweet (’lang’)
     private final boolean isRetweeted; // is it a retweet? (the object ’retweeted_status’ exists?)
     private final Long retweetedUserId; // [if retweeted] (’retweeted_status’->’user’->’id’)
     private final Long retweetedTweetId; // [if retweeted] (’retweeted_status’->’id’)
-    private final Long timestampMs; // seconds from epoch (’timestamp_ms’)
+    private final long timestampMs; // seconds from epoch (’timestamp_ms’)
 
-    public ExtendedSimplifiedTweet(Long tweetId, String text, Long userId, String userName, Long followersCount, String language, boolean isRetweeted, Long retweetedUserId, Long retweetedTweetId, Long timestampMs) {
+    public ExtendedSimplifiedTweet(long tweetId, String text, long userId, String userName, long followersCount, String language, boolean isRetweeted, Long retweetedUserId, Long retweetedTweetId, long timestampMs) {
         this.tweetId = tweetId;
         this.text = text;
         this.userId = userId;
@@ -31,8 +32,15 @@ public class ExtendedSimplifiedTweet implements Serializable {
         this.followersCount = followersCount;
         this.language = language;
         this.isRetweeted = isRetweeted;
-        this.retweetedUserId = 0L;
-        this.retweetedTweetId = 0L;
+
+        if (isRetweeted) {
+            this.retweetedUserId = retweetedUserId;
+            this.retweetedTweetId = retweetedTweetId;
+        } else {
+            this.retweetedUserId = 0L;
+            this.retweetedTweetId = 0L;
+        }
+
         this.timestampMs = timestampMs;
     }
 
@@ -47,20 +55,20 @@ public class ExtendedSimplifiedTweet implements Serializable {
         try {
             JsonObject tweet_as_json_object = parser.parse(jsonStr).getAsJsonObject();
 
-            Long tweetId = tweet_as_json_object.get("id").getAsLong();
-            Long followersCount = tweet_as_json_object.get("followers_count").getAsLong();
+            long tweetId = tweet_as_json_object.get("id").getAsLong();
             String text = tweet_as_json_object.get("text").getAsJsonPrimitive().getAsString();
             String language = tweet_as_json_object.get("lang").getAsJsonPrimitive().getAsString();
-            Long timestampMs = tweet_as_json_object.get("timestamp_ms").getAsLong();
+            long timestampMs = tweet_as_json_object.get("timestamp_ms").getAsLong();
 
             JsonObject user_as_json_object = tweet_as_json_object.getAsJsonObject("user");
-            Long userId = user_as_json_object.get("id").getAsLong();
+            long userId = user_as_json_object.get("id").getAsLong();
             String userName = user_as_json_object.get("name").getAsJsonPrimitive().getAsString();
+            long followersCount = user_as_json_object.get("followers_count").getAsLong();
 
-            boolean isRetweeted = tweet_as_json_object.get("isRetweeted").getAsBoolean();
+            boolean isRetweeted = tweet_as_json_object.has("retweeted_status");
 
-            Long retweetedUserId = null;
-            Long retweetedTweetId = null;
+            Long retweetedUserId = 0L;
+            Long retweetedTweetId = 0L;
 
             if (isRetweeted){
                 JsonObject retweeted_status = tweet_as_json_object.get("retweeted_status").getAsJsonObject();
@@ -68,23 +76,26 @@ public class ExtendedSimplifiedTweet implements Serializable {
                 JsonObject retweeted_user = retweeted_status.get("user").getAsJsonObject();
                 retweetedUserId = retweeted_user.get("id").getAsLong();
             }
+            
+            ExtendedSimplifiedTweet ext_simplified_tweet = new ExtendedSimplifiedTweet(tweetId, text, userId, userName, followersCount, language, isRetweeted, retweetedUserId, retweetedTweetId, timestampMs);
+            Optional<ExtendedSimplifiedTweet> tweet_return = Optional.of(ext_simplified_tweet);
+            return tweet_return;
 
-            ExtendedSimplifiedTweet ext_simplified_tweet = new ExtendedSimplifiedTweet(tweetId, text, userId, userName, followersCount,language,  isRetweeted, retweetedUserId, retweetedTweetId, timestampMs );
-            return Optional.of(ext_simplified_tweet);
-
-            } catch (Exception e) {
-            // System.out.println("Omitted tweet. Mandatory fields: {\"id\": ,\"text\": , \"user\": {\"id\": , \"name\": }, \"lang\": ,\"timestamp_ms\": }\n");
+        } 
+        
+        catch (Exception e) {
+            //System.out.println("Omitted tweet. Most likely this is an empty line separating two tweets\n");
             return Optional.empty();
-            }
+        }
     }
 
-    public Long getTweetId(){
+    public long getTweetId(){
     return this.tweetId;
     }
     public String getText(){
         return this.text;
     }
-    public Long getUserId(){
+    public long getUserId(){
         return this.userId;
     }
     public String getUserName(){
@@ -94,7 +105,7 @@ public class ExtendedSimplifiedTweet implements Serializable {
     public String getLanguage(){
         return this.language;
     }
-    public Long getTimeStamp(){
+    public long getTimeStamp(){
         return this.timestampMs;
     }
 
