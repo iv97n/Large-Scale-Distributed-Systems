@@ -97,6 +97,14 @@ public class ExtendedSimplifiedTweet implements Serializable {
         return this.isRetweeted;
     }
 
+    public long getRetweetedUserId(){
+        return this.retweetedUserId;
+    }
+
+    public long getretweetedId(){
+        return this.retweetedTweetId;
+    }
+
 
     @Override
     public String toString() {
