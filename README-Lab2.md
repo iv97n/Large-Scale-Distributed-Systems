@@ -8,7 +8,12 @@
 
 ## Lab 2
 - ### 1. Spark Twitter Filter
-	Here we still need to write a brief explanation  
+	The _com.edu.TwitterLanguageFilterApp_ main method leverages the Spark framework to perform a set of distributed transformations on an input file. The results are eventually saved back to the disk. During this process, the file information is loaded into a Resilient Distributed Dataset (RDD), dividing the contents into multiple partitions, which are allocated along multiple nodes of the cluster. The concatenation of the used transformations only has narrow dependencies, which enhances parallelism and reduces data transmission overheads. The transformations applied are the following:
+	- _Json-to-SimplifiedTweet map:_ Maps each entry from the online .json format to a Optional\<SimplifiedTweet\> instance.  
+	- _Valid tweet filtering:_ Filters the RDD so the new one only contains non-empty Optional\<SimplifiedTweet\> instances.
+	- _Language filtering:_ Filters the RDD so the new one only contains tweets with the specified language.
+	- _SimplifiedTweet-to-Json_ map:  Maps each entry from an Optional\<SimplifiedTweet\> instance to a online .json object.
+
 	
 - ### 2.Benchmarking the Spark-based TwitterFilter application on EMR
 	The benchmark has been conducted on two different settings of the AWS EMR (Elastic Map Reduce) service, and both configurations have yielded successful executions. The input to the application was the _.json_ Eurovision tweet files, and the roles used were EMR_DefaultRole and EMR_EC2_DefaultRole, as suggested in the Labs Forum. The execution times noted are the ones produced by the EMR console.
