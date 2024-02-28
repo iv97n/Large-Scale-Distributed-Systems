@@ -19,7 +19,7 @@ public class BiGramsApp {
     public static void main(String[] args){
 
         if (args.length < 3) {
-            System.err.println("Usage: TwitterLanguageFilterApp <language> <outputPath> <input>");
+            System.err.println("Usage: BigramsApp <language> <outputPath> <input>");
             System.exit(1);
         }
 
@@ -34,7 +34,7 @@ public class BiGramsApp {
         JavaRDD<String> sentences = sparkContext.textFile(input);
 
         JavaRDD<Optional<ExtendedSimplifiedTweet>> tweets = sentences.map(tweet -> ExtendedSimplifiedTweet.fromJson(tweet));
-        JavaRDD<Optional<ExtendedSimplifiedTweet>> filteredTweets = tweets.filter(tweet -> tweet.get().getLanguage().equals(language) && !tweet.get().getIsRetweeted());
+        JavaRDD<Optional<ExtendedSimplifiedTweet>> filteredTweets = tweets.filter(tweet -> tweet.get().getLanguage().equals(language) && !tweet.get().getIsRetweeted() && tweet.isPresent());
         JavaRDD<String> filteredTweetstext = filteredTweets.map(tweet -> tweet.get().getText().toString());
 
         JavaPairRDD<List<String>, Integer> counts = filteredTweetstext
@@ -51,6 +51,7 @@ public class BiGramsApp {
             })
             .mapToPair(bigram -> new Tuple2<>(bigram, 1))
             .reduceByKey((a, b) -> a + b);
+
         //JavaPairRDD<List<String>, Integer> sorted_counts = 
         JavaPairRDD<Integer,List<String>> swapped_counts = counts.mapToPair(pair -> new Tuple2<>(pair._2(), pair._1()));
 

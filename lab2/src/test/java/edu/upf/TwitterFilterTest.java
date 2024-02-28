@@ -1,4 +1,4 @@
-package edu.upf.spark;
+package edu.upf;
 
 import static org.junit.Assert.assertTrue;
 
