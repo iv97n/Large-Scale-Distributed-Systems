@@ -8,7 +8,7 @@
 
 ## Lab 2
 - ### 1. Spark Twitter Filter
-	The _com.edu.TwitterLanguageFilterApp_ main method leverages the Spark framework to perform a set of distributed transformations on an input file. The results are eventually saved back to the disk. During this process, the file information is loaded into a Resilient Distributed Dataset (RDD), dividing the contents into multiple partitions, which are allocated along multiple nodes of the cluster. The concatenation of the used transformations only has narrow dependencies, which enhances parallelism and reduces data transmission overheads. The transformations applied are the following:
+	The _com.edu.TwitterLanguageFilterApp_ main method leverages the Spark framework to perform a set of filtering distributed transformations on an input file. The results are eventually saved back to the disk. During this process, the file information is loaded into a Resilient Distributed Dataset (RDD), dividing the contents into multiple partitions, which are allocated along multiple nodes of the cluster. The concatenation of the used transformations only has narrow dependencies, which enhances parallelism and reduces data transmission overheads. The transformations applied are the following:
 	- _Json-to-SimplifiedTweet map:_ Maps each entry from the online .json format to a Optional\<SimplifiedTweet\> instance.  
 	- _Valid tweet filtering:_ Filters the RDD so the new one only contains non-empty Optional\<SimplifiedTweet\> instances.
 	- _Language filtering:_ Filters the RDD so the new one only contains tweets with the specified language.
@@ -79,7 +79,39 @@
 	```
     _Running time:_ 1 minute, 02 seconds
 - ### 3. Most popular bi-grams in a given language
-	Blablabla
+	The _com.edu.TwitterLanguageFilterApp_ main method leverages the Spark framework to perform a set of filtering, counting, and sorting distributed transformations on an input file. The results are eventually saved back to the disk. Simmilarly to the _TwitterLanguageFilterApp_, we use RDDs to distribute the computations among multiple nodes in a cluster. The transformations implied are the following:
+	- _Json-to-SimplifiedTweet map:_ Maps each entry from the online .json format to a Optional\<SimplifiedTweet\> instance.  
+	- _Validity, language, and originality filtering:_ Filters the RDD so the new one only contains non-empty Optional\<SimplifiedTweet\> instances. Additionally, only original tweets of the specified language are selected.
+	- _SimplifiedTweet-to-text_ map:  Maps each entry from an Optional\<SimplifiedTweet\> instance to a string containing the content of the tweet.
+	- _Bigrams counting_: Transform the RDD into a (key, value) RDD of the form (bigram, 1). Eventually perform a reduce by key transformation to count the number of appearances of each bigram.
+	- _Key-value swapping:_ Swap the key and the value in the RDD for sorting purposes.
+	- _Key sorting_: Sort the RDD by key value (number of appearances).
+
+	#### Results
+	- #### Spanish [es]
+			1. ([de, la],3421)  
+			2. ([#eurovision, #finaleurovision],3341)  
+			3. ([que, no],2425)  
+			4. ([la, canción],2345)  
+			5. ([de, #eurovision],2312)  
+			6. ([en, el],2186)  
+			7. ([lo, que],2035)  
+			8. ([en, #eurovision],1856)  
+			9. ([a, la],1843)  
+			10. ([en, la],1828)  
+	- #### English [en]
+			1.	([this, is],5871)
+			2.	([of, the],5791)
+			3.	([in, the],5227)
+			4.	([for, the],4374)
+			5.	([the, eurovision],4265)
+			6.	([eurovision, is],3317)
+			7.	([eurovision, song],3182)
+			8.	([i, love],3089)
+			9.	([is, the],2925)
+			10.	([to, be],2674)
+	- #### Catalan [ca]
+
 
 - ### 4. Most Retweeted Tweets for Most Retweeted Users
 	Blablabla
