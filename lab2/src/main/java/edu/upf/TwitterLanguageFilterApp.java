@@ -25,7 +25,7 @@ public class TwitterLanguageFilterApp {
         String input = args[2];
 
         // Create a SparkContext to initialize
-        SparkConf conf = (new SparkConf()).setAppName("TwitterLanguageFilter");
+        SparkConf conf = new SparkConf().setAppName("TwitterLanguageFilter");
         
         // conf.set("spark.hadoop.validateOutputSpecs", "false");
 

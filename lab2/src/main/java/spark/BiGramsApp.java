@@ -19,35 +19,38 @@ public class BiGramsApp {
     public static void main(String[] args){
 
         if (args.length < 3) {
-            System.err.println("Usage: BigramsApp <language> <outputPath> <input>");
+            System.err.println("Usage: BigramsApp <language> <output> <inputFile/Folder>");
             System.exit(1);
         }
 
         String language = args[0];
-        String outputPath = args[1];
+        String output = args[1];
         String input = args[2];
 
         //Create a SparkContext to initialize
-        SparkConf conf = new SparkConf().setAppName("Bigram");
+        SparkConf conf = new SparkConf().setAppName("BiaGrams");
+
         JavaSparkContext sparkContext = new JavaSparkContext(conf);
         // Load input
-        JavaRDD<String> sentences = sparkContext.textFile(input);
+        JavaRDD<String> json_tweets = sparkContext.textFile(input);
+        // Map from raw json tweets to Optional<ExtendedSimplifiedTweet> instances
+        JavaRDD<Optional<ExtendedSimplifiedTweet>> extended_simplified_tweets = json_tweets.map(tweet -> ExtendedSimplifiedTweet.fromJson(tweet));
+        // Filter the RDD so it only contains non-empty and original tweets of the specified language
+        JavaRDD<Optional<ExtendedSimplifiedTweet>> filtered_tweets = extended_simplified_tweets.filter(tweet -> tweet.isPresent() && tweet.get().getLanguage().equals(language) && !tweet.get().getIsRetweeted());
+        // Map from Optional<ExtendedSimplifiedTweet> instances to strings containing the tweet text
+        JavaRDD<String> filtered_tweets_text = filtered_tweets.map(tweet -> tweet.get().getText());
 
-        JavaRDD<Optional<ExtendedSimplifiedTweet>> tweets = sentences.map(tweet -> ExtendedSimplifiedTweet.fromJson(tweet));
-        //JavaRDD<Optional<ExtendedSimplifiedTweet>> filteredTweets = tweets.filter(tweet -> tweet.get().getLanguage().equals(language) && !tweet.get().getIsRetweeted() && tweet.isPresent());
-        JavaRDD<Optional<ExtendedSimplifiedTweet>> filteredTweets = tweets.filter(tweetOptional -> tweetOptional.isPresent() && tweetOptional.get().getLanguage().equals(language) && !tweetOptional.get().getIsRetweeted());
-
-        JavaRDD<String> filteredTweetstext = filteredTweets.map(tweet -> tweet.get().getText().toString());
-
-        JavaPairRDD<List<String>, Integer> counts = filteredTweetstext
+        JavaPairRDD<List<String>, Integer> counts = filtered_tweets_text
             .flatMap(s -> {
-                String[] words = s.split(" ");
+                // Trim the text and split it into words using as delimiter one or more whitespace characters
+                String[] words = s.trim().split("\\s+");
                 
                 List<List<String>> bigrams = new ArrayList<>();
+                // Iterate over each pair of consecutive words
                 for (int i = 0; i < words.length - 1; i++) {
                     List<String> bigram = new ArrayList<>();
-                    bigram.add(normalise(words[i]));
-                    bigram.add(normalise(words[i + 1]));
+                    bigram.add(words[i].toLowerCase());
+                    bigram.add(words[i + 1].toLowerCase());
                     bigrams.add(bigram);
                 }
                 return bigrams.iterator();
@@ -69,10 +72,9 @@ public class BiGramsApp {
 
         // Parallelize the list back into an RDD
         JavaPairRDD<List<String>, Integer> top10RDD = sparkContext.parallelizePairs(top_ten);
-        top10RDD.saveAsTextFile(outputPath);
+        top10RDD.saveAsTextFile(output);
+        
+        sparkContext.stop();
     }
 
-    private static String normalise(String word) {
-        return word.trim().toLowerCase();
-    }
 }
