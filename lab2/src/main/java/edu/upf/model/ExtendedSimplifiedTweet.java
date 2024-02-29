@@ -71,7 +71,7 @@ public class ExtendedSimplifiedTweet implements Serializable {
             }
             
             ExtendedSimplifiedTweet extended_simplified_tweet = new ExtendedSimplifiedTweet(tweetId, text, userId, userName, followersCount, language, isRetweeted, retweetedUserId, retweetedTweetId, timestampMs);
-            return = Optional.of(extended_simplified_tweet);
+            return Optional.of(extended_simplified_tweet);
 
         } 
         

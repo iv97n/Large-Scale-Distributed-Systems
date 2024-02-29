@@ -39,14 +39,14 @@ public class BiGramsApp {
         JavaRDD<Optional<ExtendedSimplifiedTweet>> filtered_tweets = extended_simplified_tweets.filter(tweet -> tweet.isPresent() && tweet.get().getLanguage().equals(language) && !tweet.get().getIsRetweeted());
         // Map from Optional<ExtendedSimplifiedTweet> instances to strings containing the tweet text
         JavaRDD<String> filtered_tweets_text = filtered_tweets.map(tweet -> tweet.get().getText());
-
-        JavaPairRDD<List<String>, Integer> counts = filtered_tweets_text
+        // Count the number of appearances per bigram
+        JavaPairRDD<List<String>, Integer> bigrams_count = filtered_tweets_text
             .flatMap(s -> {
                 // Trim the text and split it into words using as delimiter one or more whitespace characters
                 String[] words = s.trim().split("\\s+");
                 
                 List<List<String>> bigrams = new ArrayList<>();
-                // Iterate over each pair of consecutive words
+                // Iterate over each pair of consecutive words, appending each bigram to an ArrayList of bigrams
                 for (int i = 0; i < words.length - 1; i++) {
                     List<String> bigram = new ArrayList<>();
                     bigram.add(words[i].toLowerCase());
@@ -55,24 +55,24 @@ public class BiGramsApp {
                 }
                 return bigrams.iterator();
             })
-            .mapToPair(bigram -> new Tuple2<>(bigram, 1))
-            .reduceByKey((a, b) -> a + b);
+            .mapToPair(bigram -> new Tuple2<>(bigram, 1)) 
+            .reduceByKey((a, b) -> a + b); 
 
-        //JavaPairRDD<List<String>, Integer> sorted_counts = 
-        JavaPairRDD<Integer,List<String>> swapped_counts = counts.mapToPair(pair -> new Tuple2<>(pair._2(), pair._1()));
+        // Swap the elements of the RDD in order to be able to perform the sorting 
+        JavaPairRDD<Integer,List<String>> swapped_bigrams_count = bigrams_count.mapToPair(pair -> new Tuple2<>(pair._2(), pair._1()));
 
-        //sort by value
-        JavaPairRDD<Integer, List<String>> sorted_counts = swapped_counts.sortByKey(false);
+        //Sort by value (number of appearances) in a descending order
+        JavaPairRDD<Integer, List<String>> sorted_swapped_bigrams_count = swapped_bigrams_count.sortByKey(false);
 
-        //reorder again
-        JavaPairRDD<List<String>, Integer> final_rdd = sorted_counts.mapToPair(pair -> new Tuple2<>(pair._2(), pair._1()));
+        // Swap again the elements of the RDD
+        JavaPairRDD<List<String>, Integer> sorted_bigrams_count = sorted_swapped_bigrams_count.mapToPair(pair -> new Tuple2<>(pair._2(), pair._1()));
 
-        //select first 10
-        List<Tuple2<List<String>, Integer>> top_ten = final_rdd.take(10);
+        // Select the 10 most tweeted bigrams using a List<Tuple2<List<String>, Integer>>
+        List<Tuple2<List<String>, Integer>> frequent_bigrams_list = sorted_bigrams_count.take(10);
 
         // Parallelize the list back into an RDD
-        JavaPairRDD<List<String>, Integer> top10RDD = sparkContext.parallelizePairs(top_ten);
-        top10RDD.saveAsTextFile(output);
+        JavaPairRDD<List<String>, Integer> frequent_bigrams = sparkContext.parallelizePairs(frequent_bigrams_list);
+        frequent_bigrams.saveAsTextFile(output);
         
         sparkContext.stop();
     }
