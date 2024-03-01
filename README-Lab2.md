@@ -137,7 +137,7 @@
 			10. ([de, israel],22)
 
 	- #### Catalan [ca] only on Eurovision10.json
-			1.	([[], #thevoice],46)
+			1. ([[], #thevoice],46)
 			2. ([#thevoice, []],46)
 			3. ([#eurovision, []],46)
 			4. ([[], #eurovision],45)

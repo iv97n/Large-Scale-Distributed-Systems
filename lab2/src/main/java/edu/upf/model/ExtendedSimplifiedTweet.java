@@ -109,7 +109,7 @@ public class ExtendedSimplifiedTweet implements Serializable {
         return this.retweetedUserId;
     }
 
-    public Long getretweetedId(){
+    public Long getRetweetedId(){
         return this.retweetedTweetId;
     }
 
