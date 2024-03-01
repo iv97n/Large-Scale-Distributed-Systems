@@ -100,18 +100,54 @@
 			9. ([a, la],1843)  
 			10. ([en, la],1828)  
 	- #### English [en]
-			1.	([this, is],5871)
-			2.	([of, the],5791)
-			3.	([in, the],5227)
-			4.	([for, the],4374)
-			5.	([the, eurovision],4265)
-			6.	([eurovision, is],3317)
-			7.	([eurovision, song],3182)
-			8.	([i, love],3089)
-			9.	([is, the],2925)
-			10.	([to, be],2674)
+			1. ([this, is],5871)
+			2. ([of, the],5791)
+			3. ([in, the],5227)
+			4. ([for, the],4374)
+			5. ([the, eurovision],4265)
+			6. ([eurovision, is],3317)
+			7. ([eurovision, song],3182)
+			8. ([i, love],3089)
+			9. ([is, the],2925)
+			10. ([to, be],2674)
 	- #### Catalan [ca]
+			1. ([de, la],70)
+			2. ([#eurovision, #finaleurovision],53)
+			3. ([#eurovision, []],46)
+			4. ([#thevoice, []],46)
+			5. ([[], #thevoice],46)
+			6. ([up, –],45)
+			7. ([al-barakah, 🎥🎥],45)
+			8. ([#france, blew],45)
+			9. ([–, wilāyat],45)
+			10. ([[], #eurovision],45)
+	
+	Notice that the catalan execution output has some words which do not seem to be part of the catalan language. Upon quite a bit of investigation, we found out that the file Eurovision10.json contains many repeated tweets, most of them written in arabic but assigned the catalan language tag [ca]. This statement is clearly backed up by the results of the execution when we run our algorithm without Eurovision10.json and on Eurovision10.json alone:
 
+	- #### Catalan [ca] without Eurovision10.json
+			1. ([de, la],61)
+			2. ([#eurovision, #finaleurovision],53)
+			3. ([la, de],35)
+			4. ([a, la],31)
+			5. ([que, no],30)
+			6. ([a, #eurovision],28)
+			7. ([#eurovision, #eurovision2018],28)
+			8. ([#eurovision, #esc2018],24)
+			9. ([israel, #eurovision],22)
+			10. ([de, israel],22)
 
+	- #### Catalan [ca] only on Eurovision10.json
+			1.	([[], #thevoice],46)
+			2. ([#thevoice, []],46)
+			3. ([#eurovision, []],46)
+			4. ([[], #eurovision],45)
+			5. ([–, wilāyat],45)
+			6. ([[], ⤵️⤵️],45)
+			7. ([blew, up],45)
+			8. ([al-barakah, 🎥🎥],45)
+			9. ([wilāyat, al-barakah],45)
+			10. ([up, –],45)
+	
+	The two executions above prove our point.
 - ### 4. Most Retweeted Tweets for Most Retweeted Users
 	Blablabla
