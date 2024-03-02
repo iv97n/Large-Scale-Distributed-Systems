@@ -166,3 +166,6 @@
    	  	- _Append result in the top_tweetid_userid RDD:_ Use union to add the result found at the end of the iteration to our final RDD.
 	- _Use coalesce:_ Use coalsce(1) to specify the number of partitions. This way we ensure a single output.
    	- _Save as text file:_ Finally, save the result in the output and stop the sparkcontext. 
+
+Note that we use .persist() in two different RDDs. This is due to the fact that those RDDs are used in each iteration, hence significantly improving the performance of the iterative algorithms.
+Note also that there is a part in the pdf stating: _Be aware that certain users might be very retweeted and still not have tweets in this dataset._ We have decided to solve this problem by iterating through the retweetedtweetid, and printing the text of the retweeted text rather than the original, which is exactly the same. This way we ensure that the text of the tweet is seen in the output in case the original tweet was not in our dataset. 
