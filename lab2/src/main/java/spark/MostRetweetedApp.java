@@ -95,7 +95,7 @@ public class MostRetweetedApp {
             // Cast the most retweeted tweet to RDD
             JavaRDD<Tuple2<Integer, Tuple2<Long, String>>> most_retweeted_id_swapped = sparkContext.parallelize(most_retweeted_id_count_list);    
             
-            // Map the retweeted tweet id RDD into an RDD conaining a tuple (userId, (tweetId, tweetText)) (It is a single-valued RDD, not a key-value RDD)
+            // Map the retweeted tweet id RDD into an RDD conaining a tuple (userId, (tweetId, tweetText))
             JavaPairRDD<Long, Tuple2<Long, String>> most_retweeted_id = most_retweeted_id_swapped.mapToPair(retweeted -> new Tuple2<>(userId, retweeted._2));
                       
             // Append the newly created Tuple to the RDD containing the (tweetid,tweetText) and userid pairs
