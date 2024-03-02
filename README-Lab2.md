@@ -79,10 +79,10 @@
 	```
     _Running time:_ 1 minute, 02 seconds
 - ### 3. Most popular bi-grams in a given language
-	The _com.edu.TwitterLanguageFilterApp_ main method leverages the Spark framework to perform a set of filtering, counting, and sorting distributed transformations on an input file. The results are eventually saved back to the disk. Simmilarly to the _TwitterLanguageFilterApp_, we use RDDs to distribute the computations among multiple nodes in a cluster. The transformations implied are the following:
-	- _Json-to-SimplifiedTweet map:_ Maps each entry from the online .json format to a Optional\<SimplifiedTweet\> instance.  
-	- _Validity, language, and originality filtering:_ Filters the RDD so the new one only contains non-empty Optional\<SimplifiedTweet\> instances. Additionally, only original tweets of the specified language are selected.
-	- _SimplifiedTweet-to-text_ map:  Maps each entry from an Optional\<SimplifiedTweet\> instance to a string containing the content of the tweet.
+	The _spark.BiGramsApp_ main method leverages the Spark framework to perform a set of filtering, counting, and sorting distributed transformations on an input file. The results are eventually saved back to the disk. Simmilarly to the _TwitterLanguageFilterApp_, we use RDDs to distribute the computations among multiple nodes in a cluster. The transformations implied are the following:
+	- _Json-to-ExtendedSimplifiedTweet map:_ Maps each entry from the online .json format to a Optional\<ExtendedSimplifiedTweet\> instance.  
+	- _Validity, language, and originality filtering:_ Filters the RDD so the new one only contains non-empty Optional\<ExtendedSimplifiedTweet\> instances. Additionally, only original tweets of the specified language are selected.
+	- _ExtendedSimplifiedTweet-to-text_ map:  Maps each entry from an Optional\<ExtendedSimplifiedTweet\> instance to a string containing the content of the tweet.
 	- _Bigrams counting_: Transform the RDD into a (key, value) RDD of the form (bigram, 1). Eventually perform a reduce by key transformation to count the number of appearances of each bigram.
 	- _Key-value swapping:_ Swap the key and the value in the RDD for sorting purposes.
 	- _Key sorting_: Sort the RDD by key value (number of appearances).
@@ -150,4 +150,19 @@
 	
 	The two executions above prove our point.
 - ### 4. Most Retweeted Tweets for Most Retweeted Users
-	Blablabla
+	The _spark.MostRetweetedApp_ main method leverages the Spark framework to perform a set of filtering, counting, and sorting distributed transformations on an input file. The results are eventually saved back to the disk. Simmilarly both exercises above, we use RDDs to distribute the computations among multiple nodes in a cluster. The transformations implied are the following:
+	- _Json-to-ExtendedSimplifiedTweet map:_ Maps each entry from the online .json format to a Optional\<ExtendedSimplifiedTweet\> instance.
+ 	- _Validity and retweeted:_ Filters the RDD so the new one only contains non-empty Optional\<ExtendedSimplifiedTweet\> instances. Additionally, only retweeted tweets are selected.
+	- _Retweeted-user count map:_ Counts the number of times each user in the dataset has been retweeted.
+   	- _Sorted retweeted-user count map:_ Sort the users from most retweeted to less. To do so, we swap key and value and sort by key.
+   	- _Take first 10 users:_ We take the first ten users and take only their user id.
+   	- _Create empty JavaPairRDD top_tweetid_userid:_ We create an empty JavaPairRDD to fill it later on.
+   	- _For each user id do:_
+   	  	- _Get all user retweeted tweets:_ Check all retweeted tweets where the RetweetedUserId == userId
+   	  	- _Count each user retweeted tweets:_ Create a RDD with the retweeteduserid in the key and 1 as a value. Additionally, add the text of the tweet for further usage.
+   	  	- _Sort user retweeted tweets from most retweeted to less:_ Reduce by key the _user-retweeted-tweets_, swap the key and value and sort by key to order them.
+   	  	- _Take most retweeted user tweet:_ use take(1) to get the first in the RDD, and parallelize the output of take to get a _most-retweeted-id_ RDD (as the take() returns a list)
+   	  	- _Link the user with most retweeted tweet:_ use mapToPair to create an RDD with _userId_ as key and (_retweeted_id_, _text_) as value
+   	  	- _Append result in the top_tweetid_userid RDD:_ Use union to add the result found at the end of the iteration to our final RDD.
+	- _Use coalesce:_ Use coalsce(1) to specify the number of partitions. This way we ensure a single output.
+   	- _Save as text file:_ Finally, save the result in the output and stop the sparkcontext. 
