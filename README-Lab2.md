@@ -168,4 +168,5 @@
    	- _Save as text file:_ Finally, save the result in the output and stop the sparkcontext. 
 
 Note that we use .persist() in two different RDDs. This is due to the fact that those RDDs are used in each iteration, hence significantly improving the performance of the iterative algorithms.
+
 Note also that there is a part in the pdf stating: _Be aware that certain users might be very retweeted and still not have tweets in this dataset._ We have decided to solve this problem by iterating through the retweetedtweetid, and printing the text of the retweeted text rather than the original, which is exactly the same. This way we ensure that the text of the tweet is seen in the output in case the original tweet was not in our dataset. 
