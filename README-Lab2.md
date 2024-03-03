@@ -167,6 +167,24 @@
 	- _Use coalesce:_ Use coalsce(1) to specify the number of partitions. This way we ensure a single output.
    	- _Save as text file:_ Finally, save the result in the output and stop the sparkcontext. 
 
-Note that we use .persist() in two different RDDs. This is due to the fact that those RDDs are used in each iteration, hence significantly improving the performance of the iterative algorithms.
+	Note that we use .persist() in two different RDDs. This is due to the fact that those RDDs are used in each iteration, hence significantly improving the performance of the iterative algorithms.
 
-Note also that there is a part in the pdf stating: _Be aware that certain users might be very retweeted and still not have tweets in this dataset._ We have decided to solve this problem by iterating through the retweetedtweetid, and printing the text of the retweeted text rather than the original, which is exactly the same. This way we ensure that the text of the tweet is seen in the output in case the original tweet was not in our dataset. 
+	Note also that there is a part in the pdf stating: _Be aware that certain users might be very retweeted and still not have tweets in this dataset._ We have decided to solve this problem by iterating through the retweetedtweetid, and printing the text of the retweeted text rather than the original, which is exactly the same. This way we ensure that the text of the tweet is seen in the output in case the original tweet was not in our dataset. 
+
+	Last but not least, we attach the results of running our MostRetweetedApp through the entire Eurovision dataset. Note that we also include the command for local execution:
+
+	```bash
+	spark-submit --master local --class spark.MostRetweetedApp target/spark-test-1.0-SNAPSHOT.jar output input
+	```
+
+	1. (3143260474,(995356756770467840,RT @NetflixES: Ella está al mando. Con @PaquitaSalas nada malo puede pasar, ¿no? #Eurovision https://t.co/5HeUDCqxX6))
+	2. (24679473,(995397243426541568,RT @bbceurovision: See what he did there? #Eurovision #CzechRepublic  #CZE https://t.co/DwdfXmTqXg))
+	3. (15584187,(995433967351283712,RT @Eurovision: The Winner of the 2018 #Eurovision Song Contest is ISRAEL! #ESC2018 #AllAboard https://t.co/Myre7yh3YV))
+	4. (437025093,(995435123351973890,RT @ManelNMusic: Así que el año pasado quedo último con un gallo y este año gana una gallina... #Eurovision https://t.co/EfvXQbb8jp))
+	5. (39538010,(995434971765538817,RT @pewdiepie: My chicken is not your goddamn prom dress #Eurovision))
+	6. (38381308,(995388604045316097,RT @elmundotoday: Puigdemont ha logrado aparecerse durante unos segundos en el vestido de la participante de Estonia y ha proclamado la ind…))
+	7. (739812492310896640,(995405811261300740,RT @PaquitaSalas: Qué guasa tiene la niña, ¿eh? #Eurovision https://t.co/Iv1yottkvQ))
+	8. (1501434991,(995394150978727936,RT @auronplay: Muy bien Alemania secuestrando a Ed Sheeran y poniéndole una peluca. #Eurovision))
+	9. (29056256,(995381560277979136,RT @Uznare: eurovision rules https://t.co/I8cG3D5tCh))
+	10. (2754746065,(995439842107576321,RT @LVPibai: Rodolfo Chikilicuatre, un actor disfrazado con una guitarra de plástico quedó siete puestos por encima que la ganadora de un c…))
+	
