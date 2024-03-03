@@ -1,4 +1,4 @@
-package spark;
+package edu.upf;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
