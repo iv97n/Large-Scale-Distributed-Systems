@@ -8,7 +8,7 @@
 
 ## Lab 2
 - ### 1. Spark Twitter Filter
-	The _com.edu.TwitterLanguageFilterApp_ main method leverages the Spark framework to perform a set of filtering distributed transformations on an input file. The results are eventually saved back to the disk. During this process, the file information is loaded into a Resilient Distributed Dataset (RDD), dividing the contents into multiple partitions, which are allocated along multiple nodes of the cluster. The concatenation of the used transformations only has narrow dependencies, which enhances parallelism and reduces data transmission overheads. The transformations applied are the following:
+	The _edu.upf.TwitterLanguageFilterApp_ main method leverages the Spark framework to perform a set of filtering distributed transformations on an input file. The results are eventually saved back to the disk. During this process, the file information is loaded into a Resilient Distributed Dataset (RDD), dividing the contents into multiple partitions, which are allocated along multiple nodes of the cluster. The concatenation of the used transformations only has narrow dependencies, which enhances parallelism and reduces data transmission overheads. The transformations applied are the following:
 	- _Json-to-SimplifiedTweet map:_ Maps each entry from the online .json format to a Optional\<SimplifiedTweet\> instance.  
 	- _Valid tweet filtering:_ Filters the RDD so the new one only contains non-empty Optional\<SimplifiedTweet\> instances.
 	- _Language filtering:_ Filters the RDD so the new one only contains tweets with the specified language.
@@ -79,7 +79,7 @@
 	```
     _Running time:_ 1 minute, 02 seconds
 - ### 3. Most popular bi-grams in a given language
-	The _spark.BiGramsApp_ main method leverages the Spark framework to perform a set of filtering, counting, and sorting distributed transformations on an input file. The results are eventually saved back to the disk. Simmilarly to the _TwitterLanguageFilterApp_, we use RDDs to distribute the computations among multiple nodes in a cluster. The transformations implied are the following:
+	The _edu.upf.BiGramsApp_ main method leverages the Spark framework to perform a set of filtering, counting, and sorting distributed transformations on an input file. The results are eventually saved back to the disk. Simmilarly to the _TwitterLanguageFilterApp_, we use RDDs to distribute the computations among multiple nodes in a cluster. The transformations implied are the following:
 	- _Json-to-ExtendedSimplifiedTweet map:_ Maps each entry from the online .json format to a Optional\<ExtendedSimplifiedTweet\> instance.  
 	- _Validity, language, and originality filtering:_ Filters the RDD so the new one only contains non-empty Optional\<ExtendedSimplifiedTweet\> instances. Additionally, only original tweets of the specified language are selected.
 	- _ExtendedSimplifiedTweet-to-text_ map:  Maps each entry from an Optional\<ExtendedSimplifiedTweet\> instance to a string containing the content of the tweet.
@@ -150,7 +150,7 @@
 	
 	The two executions above prove our point.
 - ### 4. Most Retweeted Tweets for Most Retweeted Users
-	The _spark.MostRetweetedApp_ main method leverages the Spark framework to perform a set of filtering, counting, and sorting distributed transformations on an input file. The results are eventually saved back to the disk. Simmilarly both exercises above, we use RDDs to distribute the computations among multiple nodes in a cluster. The transformations implied are the following:
+	The _edu.upf.MostRetweetedApp_ main method leverages the Spark framework to perform a set of filtering, counting, and sorting distributed transformations on an input file. The results are eventually saved back to the disk. Simmilarly both exercises above, we use RDDs to distribute the computations among multiple nodes in a cluster. The transformations implied are the following:
 	- _Json-to-ExtendedSimplifiedTweet map:_ Maps each entry from the online .json format to a Optional\<ExtendedSimplifiedTweet\> instance.
  	- _Validity and retweeted:_ Filters the RDD so the new one only contains non-empty Optional\<ExtendedSimplifiedTweet\> instances. Additionally, only retweeted tweets are selected.
 	- _Retweeted-user count map:_ Counts the number of times each user in the dataset has been retweeted.
@@ -174,7 +174,7 @@
 	Last but not least, we attach the results of running our MostRetweetedApp through the entire Eurovision dataset. Note that we also include the command for local execution:
 
 	```bash
-	spark-submit --master local --class spark.MostRetweetedApp target/spark-test-1.0-SNAPSHOT.jar output input
+	spark-submit --master local --class edu.upf.MostRetweetedApp target/spark-test-1.0-SNAPSHOT.jar output input
 	```
 
 	1. (3143260474,(995356756770467840,RT @NetflixES: Ella está al mando. Con @PaquitaSalas nada malo puede pasar, ¿no? #Eurovision https://t.co/5HeUDCqxX6))
