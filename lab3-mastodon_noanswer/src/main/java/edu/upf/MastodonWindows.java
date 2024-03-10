@@ -23,7 +23,7 @@ public class MastodonWindows {
                 SparkConf conf = new SparkConf().setAppName("Real-time Mastodon Stateful with Windows Exercise");
                 AppConfig appConfig = AppConfig.getConfig();
 
-                StreamingContext sc = new StreamingContext(conf, Durations.seconds(5));
+                StreamingContext sc = new StreamingContext(conf, Durations.seconds(20));
                 JavaStreamingContext jsc = new JavaStreamingContext(sc);
                 jsc.checkpoint("/tmp/checkpoint");
 
@@ -31,7 +31,7 @@ public class MastodonWindows {
                 JavaPairRDD<String, String> language_trans = buildLanguageMap(maptsv);
 
                 JavaDStream<SimplifiedTweetWithHashtags> stream = new MastodonDStream(sc, appConfig).asJStream();              
-                JavaDStream<SimplifiedTweetWithHashtags> windowed_stream = stream.window(Durations.seconds(15));
+                JavaDStream<SimplifiedTweetWithHashtags> windowed_stream = stream.window(Durations.seconds(60));
                 
 
                 // Micro-batch processing
