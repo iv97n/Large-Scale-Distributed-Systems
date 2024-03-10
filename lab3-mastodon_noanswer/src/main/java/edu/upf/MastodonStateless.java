@@ -21,18 +21,17 @@ import static edu.upf.util.LanguageMapUtils.buildLanguageMap;
 
 public class MastodonStateless {
         public static void main(String[] args) {
-                //String input = args[0];
+                String input = args[0];
 
                 SparkConf conf = new SparkConf().setAppName("Real-time Twitter Stateless Exercise");
                 AppConfig appConfig = AppConfig.getConfig();
-                //JavaSparkContext sparkContext = new JavaSparkContext(conf);
 
-                StreamingContext sc = new StreamingContext(conf, Durations.seconds(10));
+                StreamingContext sc = new StreamingContext(conf, Durations.seconds(20));
                 JavaStreamingContext jsc = new JavaStreamingContext(sc);
                 jsc.checkpoint("/tmp/checkpoint");
 
                 JavaDStream<SimplifiedTweetWithHashtags> stream = new MastodonDStream(sc, appConfig).asJStream();
-                JavaRDD<String> maptsv = jsc.sparkContext().textFile("src/main/resources/map.tsv");
+                JavaRDD<String> maptsv = jsc.sparkContext().textFile(input);
                 JavaPairRDD<String, String> language_trans = buildLanguageMap(maptsv);
 
                 JavaPairDStream<String, Integer> stream_short_language = stream.mapToPair(tweet -> new Tuple2<>(tweet.getLanguage(), 1));
@@ -46,7 +45,7 @@ public class MastodonStateless {
                         .transformToPair(pair -> pair.sortByKey(false))
                         .mapToPair(pair -> new Tuple2<>(pair._2(),pair._1()));
 
-                sorted_language_count.print(10);
+                sorted_language_count.print();
 
                 // Start the application and wait for termination signal
                 sc.start();
