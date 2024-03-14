@@ -50,5 +50,6 @@ public class MastodonStateless {
                 // Start the application and wait for termination signal
                 sc.start();
                 sc.awaitTermination();
+                jsc.close();
         }
 }
