@@ -31,9 +31,7 @@ public class MastodonWindows {
                 JavaPairRDD<String, String> language_trans = buildLanguageMap(maptsv);
 
                 JavaDStream<SimplifiedTweetWithHashtags> stream = new MastodonDStream(sc, appConfig).asJStream();              
-                JavaDStream<SimplifiedTweetWithHashtags> windowed_stream = stream.window(Durations.seconds(60)); //display the 15 most frequent languages of the last 60 seconds
                 
-
                 // Micro-batch processing - Mastodon Stateless
                 JavaPairDStream<String, Integer> stream_short_language = stream.mapToPair(tweet -> new Tuple2<>(tweet.getLanguage(), 1));
                 JavaPairDStream<String, Tuple2<Integer, String>> stream_joined = stream_short_language.transformToPair(streamRDD -> streamRDD.join(language_trans));
@@ -41,21 +39,17 @@ public class MastodonWindows {
                 JavaPairDStream<String, Integer> sorted_language_count = language_count
                         .mapToPair(pair -> new Tuple2<>(pair._2(),pair._1()))
                         .transformToPair(pair -> pair.sortByKey(false))
-                        .mapToPair(pair -> new Tuple2<>(pair._2(),pair._1()));
+                        .mapToPair(pair -> new Tuple2<>(pair._2(),pair._1()));               
 
-                // Window processing
-                JavaPairDStream<String, Integer> windowed_stream_short_language = windowed_stream.mapToPair(tweet -> new Tuple2<>(tweet.getLanguage(), 1));
-                JavaPairDStream<String, Tuple2<Integer, String>> windowed_stream_joined = windowed_stream_short_language.transformToPair(streamRDD -> streamRDD.join(language_trans));
-                JavaPairDStream<String, Integer> windowed_language_count = windowed_stream_joined.mapToPair(pair -> new Tuple2<>(pair._2()._2(), pair._2()._1())).reduceByKey((a,b) -> a+b);
-                /*JavaPairDStream<String, Integer> windowed_language_count = windowed_stream_joined.mapToPair(pair -> new Tuple2<>(pair._2()._2(), pair._2()._1()))
+                // Window processing - The reduced value of over a new window is calculated using the old window’s reduce value.            
+                JavaPairDStream<String, Integer> windowed_language_count = stream_joined.mapToPair(pair -> new Tuple2<>(pair._2()._2(), pair._2()._1()))
                                                                                                                                 .reduceByKeyAndWindow((a,b) -> a+b, 
                                                                                                                                 (a, b) -> a - b,
                                                                                                                                 Durations.seconds(60), //size of the window
-                                                                                                                                Durations.seconds(60) //sliding interval: how many seconds go by before recomputing
-                                                                                                                                                      //The computation looks at the last (window_size) seconds every (sliding_interval) seconds
-                                                                                                                                );*/
-
-
+                                                                                                                                Durations.seconds(20) //sliding interval: how many seconds go by before recomputing
+                                                                                                                                                      
+                                                                                                                               );  
+                                                                                                                                                                                                                         
                 JavaPairDStream<String, Integer> sorted_windowed_language_count = windowed_language_count
                         .mapToPair(pair -> new Tuple2<>(pair._2(),pair._1()))
                         .transformToPair(pair -> pair.sortByKey(false))
@@ -86,5 +80,4 @@ public class MastodonWindows {
                 sc.awaitTermination();
                 jsc.close();
         }
-
 }
