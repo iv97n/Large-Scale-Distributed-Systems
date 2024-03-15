@@ -1,6 +1,5 @@
 package edu.upf.storage;
 
-
 import com.github.tukaaa.model.SimplifiedTweetWithHashtags;
 import edu.upf.model.HashTagCount;
 

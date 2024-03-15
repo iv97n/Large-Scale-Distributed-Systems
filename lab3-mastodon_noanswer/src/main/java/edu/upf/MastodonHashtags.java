@@ -27,32 +27,23 @@ public class MastodonHashtags {
                 AppConfig appConfig = AppConfig.getConfig();
                 StreamingContext sc = new StreamingContext(conf, Durations.seconds(10));
                 JavaStreamingContext jsc = new JavaStreamingContext(sc);
-                jsc.checkpoint("/tmp/checkpoint");
-
-                DynamoHashTagRepository repository = new DynamoHashTagRepository();
+                //jsc.checkpoint("/tmp/checkpoint");
 
                 JavaDStream<SimplifiedTweetWithHashtags> stream = new MastodonDStream(sc, appConfig).asJStream();
-                /*
-                long tweetId = 123456789L;
-                String text = "This is a sample tweet.";
-                long userId = 987654321L;
-                String userName = "example_user";
-                String language = "en";
-                long timestampMs = System.currentTimeMillis();
-                List<String> hashtags = Arrays.asList("example", "tweet");
 
-                SimplifiedTweetWithHashtags tweet = new SimplifiedTweetWithHashtags(
-                tweetId, text, userId, userName, language, timestampMs, hashtags);   
-                repository.write(tweet);   
-                */
                 stream.foreachRDD(rdd -> {
-                        rdd.foreach(tweet -> {
-                            repository.write(tweet);
+                        rdd.foreachPartition(partition -> {
+                            partition.forEachRemaining(tweet -> {
+                                DynamoHashTagRepository repository = new DynamoHashTagRepository();
+                                repository.write(tweet);
+                            });
                         });
-                    });
-
+                });
+                
+                
                 // Start the application and wait for termination signal
                 jsc.start();
                 jsc.awaitTermination();
+                jsc.close();
         }
 }
