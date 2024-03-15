@@ -34,6 +34,8 @@ public class DynamoHashTagRepository implements IHashtagRepository, Serializable
   final Table dynamoDBTable = dynamoDB.getTable(TableName);
 
 
+
+
   @Override
   public void write(SimplifiedTweetWithHashtags h) {
     
@@ -58,10 +60,15 @@ public class DynamoHashTagRepository implements IHashtagRepository, Serializable
   
   }
 
+
+
+
   @Override
   public List<HashTagCount> readTop10(String lang) {
     return Collections.emptyList(); // TODO IMPLEMENT ME
   }
+
+
 
 
   public static void putItemInTable(Table dbt, String hashtag, String lan, List<Long> tweet_id){
@@ -82,6 +89,9 @@ public class DynamoHashTagRepository implements IHashtagRepository, Serializable
     }
   }
 
+
+
+
   public static void updateItemInTable(Table dbt, Long tweet_id, Item item){
     
     try {
@@ -101,5 +111,7 @@ public class DynamoHashTagRepository implements IHashtagRepository, Serializable
     }
     
   }
+
+  
 
 }
