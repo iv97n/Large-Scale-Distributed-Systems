@@ -25,3 +25,19 @@ Additionally, we set the window's duration to be 60 seconds, and the slide's dur
 
 Behavioral information of this function has been obtained from [reduceByKeyAndWindow Spark documentation](https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.streaming.DStream.reduceByKeyAndWindow.html)
 
+## Section 6: DynamoDB
+In this section we create an application to write data to a dynamo DB. Note that we have created the table in AWS as stated in the lab introduction. We have considered to use as primary key the hashtag and the language, as we might encounter one hashtag in more than one language. In order to avoid possible errors we only consider those tweets that have certain conditions, that is that have at least one hashtag and that the language of the tweet has been succesfully read.
+
+### Write
+We first check if the tweet is in the table, if it is not, we create a new item and put it on the table, if the tweet exists, we update its count adding 1, and we add the tweet id to the list of tweets containing that hashtag. In the main we need to create a repository for each partition and for each tweet call the method write
+
+```
+spark-submit --conf spark.driver.extraJavaOptions=-Dlog4j.configuration=file:log4j.properties --class edu.upf.MastodonHashtags target/lab3-mastodon-1.0-SNAPSHOT.jar
+```
+### Read
+We simply need to scan the table, get all tweets with the specified language and use the class HashTagCount to help us order it. Note that now we shall specify the language we want to use.
+
+```
+spark-submit --conf spark.driver.extraJavaOptions=-Dlog4j.configuration=file:log4j.properties --class edu.upf.MastodonHashtagsReader target/lab3-mastodon-1.0-SNAPSHOT.jar lan
+```
+
