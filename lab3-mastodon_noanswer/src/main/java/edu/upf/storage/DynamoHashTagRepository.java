@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.List;
 import java.util.Arrays;
 
@@ -16,8 +17,11 @@ import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.ResourceNotFoundException;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.ItemCollection;
+import com.amazonaws.services.dynamodbv2.document.ScanOutcome;
 import com.github.tukaaa.model.SimplifiedTweetWithHashtags;
 import edu.upf.model.HashTagCount;
+import edu.upf.model.HashTagCountComparator;
 
 public class DynamoHashTagRepository implements IHashtagRepository, Serializable {
 
@@ -65,7 +69,29 @@ public class DynamoHashTagRepository implements IHashtagRepository, Serializable
 
   @Override
   public List<HashTagCount> readTop10(String lang) {
-    return Collections.emptyList(); // TODO IMPLEMENT ME
+    Map<String, Long> hashtagCounts = new HashMap<>();
+
+    // Scan the DynamoDB table for items with the specified language
+    ItemCollection<ScanOutcome> outcome = dynamoDBTable.scan();
+    for (Item item : outcome) {
+        String language = item.getString("language");
+        
+        if (language.equals(lang)) {
+            String hashtag = item.getString("hashtag");
+            long count = item.getLong("Counter");
+            hashtagCounts.put(hashtag, count);
+        }
+        
+    }
+
+    // Sort the hashtags based on their appearance count in descending order
+    List<HashTagCount> top10 = hashtagCounts.entrySet().stream()
+            .map(entry -> new HashTagCount(entry.getKey(), lang, entry.getValue()))
+            .sorted(new HashTagCountComparator().reversed())
+            .limit(10)
+            .collect(Collectors.toList());
+
+    return top10;
   }
 
 
